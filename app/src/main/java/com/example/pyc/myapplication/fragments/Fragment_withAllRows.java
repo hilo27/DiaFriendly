@@ -217,10 +217,13 @@ public class Fragment_withAllRows extends Fragment implements View.OnClickListen
             // подключаемся к БД
             SQLiteDatabase db = dbHelper.getWritableDatabase();
 
+            userFilter = (EditText)v.findViewById(R.id.userFilter);
+
             // тут обязательно нужны все колонки т.к в дальнейшем нужны COLOR & DESCRIPTION
             String[] columns = new String[] {"rowid AS _id", DATA, TIME, COLOR, DESCRIPTION };
-            String selection = "date = ?";  // выбирпаю дату = selectionArgs который беру у groupCursor
-            String[] selectionArgs = new String[] { groupCursor.getString(groupCursor.getColumnIndex(DATA)) };
+            String selection = "date = ? and "+DESCRIPTION+" like ?";  // выбирпаю дату = selectionArgs который беру у groupCursor
+            String[] selectionArgs = new String[] { groupCursor.getString(groupCursor.getColumnIndex(DATA)),
+                    "%" + userFilter.getText().toString() + "%" };
             String orderBy = TIME + " DESC"; //сортирую по времени
 
             return db.query(DATABASE_TABLE, columns, selection, selectionArgs, null, null, orderBy);
