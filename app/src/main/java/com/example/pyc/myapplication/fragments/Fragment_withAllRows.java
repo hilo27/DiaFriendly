@@ -62,15 +62,15 @@ public class Fragment_withAllRows extends Fragment implements View.OnClickListen
         final ExpandableListView allRows = (ExpandableListView) v.findViewById(R.id.allRows);
 
         //выбираю с какими колонками работать и в каком порядке выводить
-        final String[] columns = new String[] {"rowid AS _id", DATA, TIME, DESCRIPTION };
+        final String[] columns = new String[] {"rowid AS _id", DATA };
 
         // подключаемся к БД
         db = dbHelper.getWritableDatabase();
 
         //выбираю с какими колонками работать и в каком порядке выводить
-        String groupBy = DATA;
+        final String groupBy = DATA;
         //сортирую по дате, разбив дату на отдельные цифры
-        String orderBy =  "substr(date, 7, 4) DESC, substr(date, 4, 2) DESC, substr(date, 1, 2) DESC";
+        final String orderBy =  "substr(date, 7, 4) DESC, substr(date, 4, 2) DESC, substr(date, 1, 2) DESC";
 
         // данные по названиям групп для адаптера
         Cursor cursor = db.query(DATABASE_TABLE, columns, null, null, groupBy, null, orderBy);
@@ -82,7 +82,7 @@ public class Fragment_withAllRows extends Fragment implements View.OnClickListen
         String[] childFrom = { TIME, DESCRIPTION };
         int[] childTo = { R.id.text2, R.id.text3 };
 
-        final SimpleCursorTreeAdapter sctAdapter2 = new MyAdapter(getActivity().getBaseContext(), cursor,
+        final SimpleCursorTreeAdapter sctAdapter2 = new MyAdapter2(getActivity().getBaseContext(), cursor,
                 android.R.layout.simple_expandable_list_item_1, groupFrom,
                 groupTo, R.layout.items, childFrom,
                 childTo);
@@ -101,17 +101,13 @@ public class Fragment_withAllRows extends Fragment implements View.OnClickListen
             sctAdapter2.setFilterQueryProvider(new FilterQueryProvider() {
                 @Override
                 public Cursor runQuery(CharSequence constraint) {
-
                     if (constraint == null || constraint.length() == 0) {
-                        //allRows.setVisibility(View.VISIBLE);
-                        //listView.setVisibility(View.GONE);
-                        return db.query(DATABASE_TABLE, columns, null, null, null, null, null);
+                        return db.query(DATABASE_TABLE, columns, null, null, groupBy, null, orderBy);
                     }
                     else {
-                        //allRows.setVisibility(View.GONE);
-                        //listView.setVisibility(View.VISIBLE);
-                        return db.rawQuery("select id as _id, time, "+DESCRIPTION+" from " + DATABASE_TABLE + " where " +
-                                DESCRIPTION + " like ?", new String[]{"%" + constraint.toString() + "%"});
+                        return db.rawQuery("select id as _id, "+DATA+", "+TIME+", "+DESCRIPTION+" from " + DATABASE_TABLE +
+                                " where "+DESCRIPTION+" like ? GROUP BY "+DATA+" ORDER BY "+orderBy,
+                                new String[]{"%" + constraint.toString() + "%"});
                     }
                 }
             });
@@ -173,6 +169,37 @@ public class Fragment_withAllRows extends Fragment implements View.OnClickListen
         public MyAdapter(Context context, Cursor cursor, int groupLayout,
                          String[] groupFrom, int[] groupTo, int childLayout,
                          String[] childFrom, int[] childTo) {
+            super(context, cursor, groupLayout, groupFrom, groupTo,
+                    childLayout, childFrom, childTo);
+        }
+
+        @Override
+        protected void bindChildView(View view, Context context, Cursor getChildrenCursor, boolean isLastChild) {
+            super.bindChildView(view, context, getChildrenCursor, isLastChild);
+            // забираю значение у childrenCursor'a хотя можно и у просто cursor
+            String color = getChildrenCursor.getString(getChildrenCursor.getColumnIndex(COLOR));
+            //String color ="#1B3F51B5";
+            view.setBackgroundColor(Color.parseColor(color));
+        }
+
+        protected Cursor getChildrenCursor(Cursor groupCursor) {
+            // подключаемся к БД
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+            // тут обязательно нужны все колонки т.к в дальнейшем нужны COLOR & DESCRIPTION
+            String[] columns = new String[] {"rowid AS _id", DATA, TIME, COLOR, DESCRIPTION };
+            String selection = "date = ?";  // выбирпаю дату = selectionArgs который беру у groupCursor
+            String[] selectionArgs = new String[] { groupCursor.getString(groupCursor.getColumnIndex(DATA)) };
+            String orderBy = TIME + " DESC"; //сортирую по времени
+
+            return db.query(DATABASE_TABLE, columns, selection, selectionArgs, null, null, orderBy);
+        }
+    }
+
+    private class MyAdapter2 extends SimpleCursorTreeAdapter {
+        public MyAdapter2(Context context, Cursor cursor, int groupLayout,
+                          String[] groupFrom, int[] groupTo, int childLayout,
+                          String[] childFrom, int[] childTo) {
             super(context, cursor, groupLayout, groupFrom, groupTo,
                     childLayout, childFrom, childTo);
         }
