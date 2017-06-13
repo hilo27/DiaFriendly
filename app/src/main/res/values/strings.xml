@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">DiaFriendly</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    // Пункты меню
+    <string name="today_item">Сегодня</string>
+    <string name="yesterday_item">Вчера</string>
+    <string name="calendar_item">Все записи</string>
+    <string name="calc_item">Калькулятор</string>
+    <string name="settings_item">Настройки</string>
+    <string name="exit_item">Выход</string>
+
+
+    <string name="double_back">Нажмите ещё раз чтобы выйти</string>
+    <string name="not_save">Данные несохранены</string>
+    <string name="btnSave_text">Сохранить</string>
+    <string name="hint">Текст заметки</string>
+    <string name="btnCancel">Отмена</string>
+    <string name="item_save">Заметка сохранена</string>
+    <string name="Empty_today">Сегодня ещё не было записей.</string>
+    <string name="Empty_yesterday">Вчера не было никаких записей</string>
+    <string name="empty">Тут пока ничего нет</string>
+
+    // оформление edit_box и color_picker
+    
+    <string name="btn_Done">Готово</string>
+    <string name="edit_row_tittle_box">Изменить запись</string>
+    <string name="choose_color">Выберете цвет</string>
+    <string name="title_setting_INSon1XE">Сколько инсулина (ед) на 1ХЕ</string>
+    <string name="prefYGLIto1XE">Сколько углеводов (г) в 1ХЕ</string>
+    <string name="import_successful">Записи успешно восстановлены</string>
+    <string name="import_faild">Сбой восстановления</string>
+    <string name="backup_successful">Данные сохранены</string>
+    <string name="backup_faild">Сбой</string>
+    <string name="importDB">Импорт записей</string>
+    <string name="exportDB">Экспорт записей</string>
+    <string name="warning_all_erase">ВСЕ ЗАПИСИ БУДУТ УДАЛЕНЫ, НАЖМИТЕ СНОВА ЕСЛИ УВЕРЕНЫ</string>
+
+
+</resources>

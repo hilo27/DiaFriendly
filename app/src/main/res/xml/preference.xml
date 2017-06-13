@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:defaultValue="2"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/title_setting_INSon1XE"
+        android:key="prefINSto1XE"
+        android:inputType="numberDecimal" />
+
+    <EditTextPreference
+        android:defaultValue="12"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/prefYGLIto1XE"
+        android:key="prefYGLIto1XE"
+        android:inputType="numberDecimal" />
+
+    <Preference android:title="@string/importDB"
+        android:key="@string/importDB"
+        android:summary="Загрузить записи, полностью удалив имеющиеся"/>
+
+    <Preference android:title="@string/exportDB"
+        android:key="@string/exportDB"
+        android:summary="Сохранить имеющиеся записи в файл"/>
+
+</PreferenceScreen>

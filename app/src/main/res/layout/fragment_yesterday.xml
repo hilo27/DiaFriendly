@@ -1,0 +1,26 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.pyc.myapplication.fragments.Fragment_yesterday">
+
+    <ListView
+        android:id="@+id/output_yesterday"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:divider="#07000000"
+        android:dividerHeight="18px"
+        android:textSize="14sp">
+    </ListView>
+
+    <TextView
+        android:text="@string/Empty_yesterday"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/emptyYesterElem"
+        android:textSize="15sp"
+        android:textAlignment="viewStart"
+        android:visibility="gone" />
+
+</RelativeLayout>

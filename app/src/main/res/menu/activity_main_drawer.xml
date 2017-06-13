@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_Today"
+            android:icon="@drawable/ic_event_black_24dp"
+            android:title="@string/today_item" />
+        <item
+            android:id="@+id/nav_Yesterday"
+            android:icon="@drawable/ic_event_note_black_24dp"
+            android:title="@string/yesterday_item" />
+        <item
+            android:id="@+id/nav_Calendar"
+            android:icon="@drawable/ic_date_range_black_24dp"
+            android:title="@string/calendar_item" />
+        <item
+            android:id="@+id/nav_calc"
+            android:icon="@drawable/ic_gradient_black_24dp"
+            android:title="@string/calc_item" />
+        <item
+            android:id="@+id/nav_Settings"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="@string/settings_item" />
+    </group>
+
+    <item android:title= "">
+        <menu>
+            <item
+               android:id="@+id/nav_Exit"
+               android:icon="@drawable/ic_exit_to_app_black_24dp"
+               android:title="@string/exit_item" />
+        </menu>
+    </item>
+
+</menu>

@@ -1,0 +1,37 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.pyc.myapplication.fragments.Fragment_withAllRows">
+
+    <EditText android:id="@+id/userFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Поиск" />
+
+    <TextView
+        android:text="@string/empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/emptyListElem"
+        android:textSize="15sp"
+        android:textAlignment="viewStart"
+        android:layout_below="@+id/userFilter"
+        android:visibility="gone" />
+
+    <ExpandableListView
+        android:id="@+id/allRows"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/userFilter">
+    </ExpandableListView>
+
+    <ListView
+        android:id="@+id/sortedListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userFilter"
+        android:visibility="invisible" />
+
+</RelativeLayout>
