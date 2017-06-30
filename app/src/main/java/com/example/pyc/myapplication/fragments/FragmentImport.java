@@ -45,6 +45,7 @@ public class FragmentImport extends Fragment implements View.OnClickListener {
     View v;
 
     Button btnSave, btnCancel, btnColor, btnAdd;
+
     EditText txt_description;
     TextView dateView;
     DBHelper dbHelper;
@@ -53,6 +54,13 @@ public class FragmentImport extends Fragment implements View.OnClickListener {
     public static boolean dataset = false;
     public static boolean dropColor = true;
     static String dateString, color;  // делаю поле статичным, чтобы сохранить значение
+
+    String text;
+    Fragment_calc fcalc;
+
+    public void setText(double c, double d) {
+        this.text = "Ем "+String.valueOf(d)+"ХЕ, нужно подколоть "+String.valueOf(c)+" ед. инсулина ";
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -138,6 +146,9 @@ public class FragmentImport extends Fragment implements View.OnClickListener {
 
            dataset = false;
            dropColor = true;
+
+           // заполняю значения из калькулятора при восстановлении
+           if (text!=null){txt_description.setText(text);}
 
            init();
        }

@@ -22,6 +22,14 @@ public class Fragment_calc extends Fragment {
     TextView result;
     double c, d, x, y;
 
+    public double getC() {
+        return c;
+    }
+
+    public double getD() {
+        return d;
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // чтобы заработало findViewById
         v = inflater.inflate(R.layout.fragment_calc, container, false);
@@ -51,7 +59,6 @@ public class Fragment_calc extends Fragment {
             public void afterTextChanged(Editable s) {init();}
         });
 
-
         // возвращаю переменной v которая есть View чтобы работать вне метода
         return v;
     }
@@ -67,7 +74,7 @@ public class Fragment_calc extends Fragment {
         if (yS =="") y=12; else y=Double.parseDouble(settings.getString("prefYGLIto1XE", ""));
     }
 
-    private void init() {
+    public void init() {
         // проверка на пустоту
         if (TextUtils.isEmpty(defgrams.getText().toString())|| TextUtils.isEmpty(targetmass.getText().toString())) {
             result.setText("Результат");
@@ -92,7 +99,7 @@ public class Fragment_calc extends Fragment {
     }
 
     // метод округления, где scale кол-во знаков после запятой
-    private double round(double number, int scale) {
+    public double round(double number, int scale) {
         int pow = 10;
         for (int i = 1; i < scale; i++)
             pow *= 10;

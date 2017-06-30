@@ -75,6 +75,11 @@ public class MainActivity extends AppCompatActivity
                 import_view_present = true;
                 //делаю кнопку добавления записи срытой
                 findViewById(R.id.fab).setVisibility(View.INVISIBLE);
+                if (fcalc.getC()>0){
+                    // привязываю переменную к тексту
+                   fimport.setText(fcalc.round(fcalc.getC(),1),fcalc.round(fcalc.getD(),1));
+
+                }
             }
         });
 
