@@ -37,6 +37,7 @@
     <string name="importDB">Импорт записей</string>
     <string name="exportDB">Экспорт записей</string>
     <string name="warning_all_erase">ВСЕ ЗАПИСИ БУДУТ УДАЛЕНЫ, НАЖМИТЕ СНОВА ЕСЛИ УВЕРЕНЫ</string>
+    <string name="warning_export_all">ЭКСПОРТИРОВАТЬ ВСЕ ЗАПИСИ? НАЖМИТЕ СНОВА ЕСЛИ УВЕРЕНЫ</string>
 
 
 </resources>
