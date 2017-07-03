@@ -46,7 +46,7 @@ public class FragmentImport extends Fragment implements View.OnClickListener {
 
     Button btnSave, btnCancel, btnColor, btnAdd;
 
-    EditText txt_description;
+    public EditText txt_description;
     TextView dateView;
     DBHelper dbHelper;
     TimePicker timePicker;
@@ -56,7 +56,6 @@ public class FragmentImport extends Fragment implements View.OnClickListener {
     static String dateString, color;  // делаю поле статичным, чтобы сохранить значение
 
     String text;
-    Fragment_calc fcalc;
 
     public void setText(double c, double d) {
         this.text = "Ем "+String.valueOf(d)+"ХЕ, нужно подколоть "+String.valueOf(c)+" ед. инсулина ";

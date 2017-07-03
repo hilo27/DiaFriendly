@@ -18,9 +18,14 @@ import com.example.pyc.myapplication.R;
 public class Fragment_calc extends Fragment {
 
     View v;
-    EditText targetmass, defgrams;
+    public EditText targetmass, defgrams;
     TextView result;
     double c, d, x, y;
+    public String str;
+
+    public void setStr(String str) {
+        this.str = str;
+    }
 
     public double getC() {
         return c;
@@ -58,7 +63,11 @@ public class Fragment_calc extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {init();}
         });
-
+        if (str !=null){
+            Fragment_calc fcalc = new Fragment_calc();
+            getFragmentManager().beginTransaction().replace(R.id.container, fcalc).commit();
+            //getFragmentManager().beginTransaction().remove(fimport).commit();
+        }
         // возвращаю переменной v которая есть View чтобы работать вне метода
         return v;
     }

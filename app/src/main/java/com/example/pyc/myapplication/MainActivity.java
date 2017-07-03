@@ -145,6 +145,9 @@ public class MainActivity extends AppCompatActivity
             setDrawerState(true);
             // присутствие формы импорта
             import_view_present = false;
+            if (this.fimport.txt_description.getText().toString().equals("")){
+                fcalc.setStr("");
+            }
             //dropColor = false;
             //navigationView.setCheckedItem(R.id.nav_Today);
 
