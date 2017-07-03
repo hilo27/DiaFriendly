@@ -21,10 +21,23 @@ public class Fragment_calc extends Fragment {
     public EditText targetmass, defgrams;
     TextView result;
     double c, d, x, y;
-    public String str;
+    public boolean clear = false;
 
-    public void setStr(String str) {
-        this.str = str;
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (clear){
+            defgrams.setText("");
+            targetmass.setText("");
+            clear = false;
+            d=0;
+            c=0;
+            init();
+        }
+    }
+
+    public void setClear(boolean clear) {
+        this.clear = clear;
     }
 
     public double getC() {
@@ -63,11 +76,6 @@ public class Fragment_calc extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {init();}
         });
-        if (str !=null){
-            Fragment_calc fcalc = new Fragment_calc();
-            getFragmentManager().beginTransaction().replace(R.id.container, fcalc).commit();
-            //getFragmentManager().beginTransaction().remove(fimport).commit();
-        }
         // возвращаю переменной v которая есть View чтобы работать вне метода
         return v;
     }
@@ -86,6 +94,8 @@ public class Fragment_calc extends Fragment {
     public void init() {
         // проверка на пустоту
         if (TextUtils.isEmpty(defgrams.getText().toString())|| TextUtils.isEmpty(targetmass.getText().toString())) {
+            d=0;
+            c=0;
             result.setText("Результат");
           return;
         }

@@ -138,19 +138,21 @@ public class FragmentImport extends Fragment implements View.OnClickListener {
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-       if (txt_description.getText().toString().equals("")){
-           Calendar c = Calendar.getInstance();
-           timePicker.setCurrentHour(c.get(Calendar.HOUR_OF_DAY)); //hour_of_day = 24ч
-           timePicker.setCurrentMinute(c.get(Calendar.MINUTE));
+        // заполняю значения из калькулятора при восстановлении
+        if (text!=null){
+            txt_description.setText(text);
+        }
 
-           dataset = false;
-           dropColor = true;
+        if (txt_description.getText().toString().equals("")){
+            Calendar c = Calendar.getInstance();
+            timePicker.setCurrentHour(c.get(Calendar.HOUR_OF_DAY)); //hour_of_day = 24ч
+            timePicker.setCurrentMinute(c.get(Calendar.MINUTE));
 
-           // заполняю значения из калькулятора при восстановлении
-           if (text!=null){txt_description.setText(text);}
+            dataset = false;
+            dropColor = true;
 
-           init();
-       }
+            init();
+        }
     }
 
     @Override
@@ -205,6 +207,7 @@ public class FragmentImport extends Fragment implements View.OnClickListener {
                     db.insert(DATABASE_TABLE, null, values);
 
                     // обнуляю поля
+                    text = null;
                     txt_description.setText("");
 
                     // вывожу результат записи
@@ -225,6 +228,7 @@ public class FragmentImport extends Fragment implements View.OnClickListener {
             case R.id.btnCancel:
                 dbHelper.close();
                 // обнуляю поля
+                text = null;
                 txt_description.setText("");
 
                 // алгоритм пересоздания уже есть в логике кнопки назад

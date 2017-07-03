@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity
                 import_view_present = true;
                 //делаю кнопку добавления записи срытой
                 findViewById(R.id.fab).setVisibility(View.INVISIBLE);
-                if (fcalc.getC()>0){
+                if (fcalc.getC()>0 && fcalc.getD()>0){
                     // привязываю переменную к тексту
                    fimport.setText(fcalc.round(fcalc.getC(),1),fcalc.round(fcalc.getD(),1));
 
@@ -145,18 +145,10 @@ public class MainActivity extends AppCompatActivity
             setDrawerState(true);
             // присутствие формы импорта
             import_view_present = false;
+            // чистим значения калькулятора
             if (this.fimport.txt_description.getText().toString().equals("")){
-                fcalc.setStr("");
+                fcalc.setClear(true);
             }
-            //dropColor = false;
-            //navigationView.setCheckedItem(R.id.nav_Today);
-
-            // txt_description из fragmentimport
-            //txt_description = (EditText) findViewById(R.id.txt_description);
-
-            //Toast.makeText(this, R.string.not_save, Toast.LENGTH_SHORT).show();
-            //getFragmentManager().beginTransaction().replace(R.id.container, ftoday).commit();
-            //getFragmentManager().beginTransaction().remove(fimport).commit();
             getFragmentManager().popBackStack();
 
             // кнопка стала видимой
