@@ -8,7 +8,7 @@ import android.widget.SimpleCursorAdapter;
 
 import static com.example.pyc.myapplication.fragments.DBHelper.COLOR;
 
-// использу в Fragment_today и Fragment_yesterday
+// использую в Fragment_today и Fragment_yesterday
 public class CursorAdapter extends SimpleCursorAdapter {
 
     public CursorAdapter(Context context, int list, Cursor query, String[] strings, int[] ints) {
