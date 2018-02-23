@@ -11,7 +11,7 @@ import static com.example.pyc.myapplication.fragments.DBHelper.COLOR;
 // использую в Fragment_today и Fragment_yesterday
 public class CursorAdapter extends SimpleCursorAdapter {
 
-    public CursorAdapter(Context context, int list, Cursor query, String[] strings, int[] ints) {
+    CursorAdapter(Context context, int list, Cursor query, String[] strings, int[] ints) {
         super(context,list,query,strings,ints);
     }
 

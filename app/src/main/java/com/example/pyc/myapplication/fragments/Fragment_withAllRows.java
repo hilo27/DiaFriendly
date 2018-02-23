@@ -1,5 +1,7 @@
 package com.example.pyc.myapplication.fragments;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.database.Cursor;
@@ -9,15 +11,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ExpandableListView;
-import android.widget.FilterQueryProvider;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.SimpleCursorTreeAdapter;
+import android.view.*;
+import android.widget.*;
 
 import com.example.pyc.myapplication.R;
 
@@ -34,8 +29,10 @@ public class Fragment_withAllRows extends Fragment implements View.OnClickListen
     View v;
     DBHelper dbHelper;
     EditText userFilter;
-    //SimpleCursorAdapter userAdapter;
     SQLiteDatabase db;
+    SimpleCursorTreeAdapter sctAdapter;
+    ExpandableListView allRows;
+    int openedGroup = -1; // показатель открытой группы, начинается с 0
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,10 +54,75 @@ public class Fragment_withAllRows extends Fragment implements View.OnClickListen
     }
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
+        int type = ExpandableListView.getPackedPositionType(info.packedPosition);
+
+        // Создаём контекстное меню, только для подпунктов
+        if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+            // запоминаем какая группа раскрыта
+            openedGroup = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+            // что нажато определяется по 2 параметру
+            menu.add(0, 0, 1, "Удалить запись");
+            menu.add(0, 1, 0, "Редактировать запись");
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        db = dbHelper.getWritableDatabase();
+        Fragment_today fragment_today = new Fragment_today();
+        // получаем из пункта контекстного меню данные по пункту списка
+        ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) item.getMenuInfo();
+
+        // УДАЛЕНИЕ
+        if (item.getItemId() == 0) {
+            // извлекаем id записи и удаляем соответствующую запись в БД
+            fragment_today.delRec(info.id, db);
+            this.onResume();
+
+            // разворачиваем повторно открытую группу
+            if (openedGroup > -1) {
+                allRows.expandGroup(openedGroup);
+            }
+
+            return true;
+        }
+
+        // РЕДАКТИРОВАНИЕ
+        if (item.getItemId() == 1) {
+            String[] columns = new String[]{"rowid AS _id", DESCRIPTION, COLOR};
+            Cursor discript = db.query(DATABASE_TABLE, columns, "id" + " = " + info.id, null, null, null, null);
+            discript.moveToFirst();
+            String oldItem = discript.getString(discript.getColumnIndex(DESCRIPTION));
+            String oldColor = discript.getString(discript.getColumnIndex(COLOR));
+
+            // Show input box
+            showInputBox(info.id, oldItem, oldColor);
+            discript.close();
+            return true;
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        init();
 
-        final ExpandableListView allRows = (ExpandableListView) v.findViewById(R.id.allRows);
+        // если в текстовом поле есть текст, выполняем фильтрацию
+        // данная проверка нужна при переходе от одной ориентации экрана к другой
+        if (!userFilter.getText().toString().isEmpty()){
+            sctAdapter.getFilter().filter(userFilter.getText().toString());
+        }
+
+    }
+
+
+    private void init() {
+        allRows = (ExpandableListView) v.findViewById(R.id.allRows);
 
         //выбираю с какими колонками работать и в каком порядке выводить
         final String[] columns = new String[]{"rowid AS _id", DATA};
@@ -83,20 +145,19 @@ public class Fragment_withAllRows extends Fragment implements View.OnClickListen
         String[] childFrom = {TIME, DESCRIPTION};
         int[] childTo = {R.id.text2, R.id.text3};
 
-        final SimpleCursorTreeAdapter sctAdapter = new MyAdapter(getActivity().getBaseContext(), cursor,
+        userFilter = (EditText) v.findViewById(R.id.userFilter);
+
+        sctAdapter = new ExpListCursorAdaper(db, userFilter, getActivity().getBaseContext(), cursor,
                 android.R.layout.simple_expandable_list_item_1, groupFrom,
                 groupTo, R.layout.items, childFrom,
                 childTo);
 
-        userFilter = (EditText) v.findViewById(R.id.userFilter);
         View empty = v.findViewById(R.id.emptyListElem);   // значение для пустого listView
         allRows.setAdapter(sctAdapter);
         allRows.setEmptyView(empty);
 
-        // если в текстовом поле есть текст, выполняем фильтрацию
-        // данная проверка нужна при переходе от одной ориентации экрана к другой
-        if (!userFilter.getText().toString().isEmpty())
-            sctAdapter.getFilter().filter(userFilter.getText().toString());
+        // добавляем контекстное меню к списку
+        registerForContextMenu(allRows);
 
         try {
             // устанавливаем провайдер фильтрации
@@ -128,42 +189,9 @@ public class Fragment_withAllRows extends Fragment implements View.OnClickListen
                 public void afterTextChanged(Editable editable) {
                 }
             });
+
         } catch (SQLException ex) {
-            //
-        }
-    }
-
-    private class MyAdapter extends SimpleCursorTreeAdapter {
-        public MyAdapter(Context context, Cursor cursor, int groupLayout,
-                         String[] groupFrom, int[] groupTo, int childLayout,
-                         String[] childFrom, int[] childTo) {
-            super(context, cursor, groupLayout, groupFrom, groupTo,
-                    childLayout, childFrom, childTo);
-        }
-
-        @Override
-        protected void bindChildView(View view, Context context, Cursor getChildrenCursor, boolean isLastChild) {
-            super.bindChildView(view, context, getChildrenCursor, isLastChild);
-            // забираю значение у childrenCursor'a хотя можно и у просто cursor
-            String color = getChildrenCursor.getString(getChildrenCursor.getColumnIndex(COLOR));
-            //String color ="#1B3F51B5";
-            view.setBackgroundColor(Color.parseColor(color));
-        }
-
-        protected Cursor getChildrenCursor(Cursor groupCursor) {
-            // подключаемся к БД
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-            userFilter = (EditText) v.findViewById(R.id.userFilter);
-
-            // тут обязательно нужны все колонки т.к в дальнейшем нужны COLOR & DESCRIPTION
-            String[] columns = new String[]{"rowid AS _id", DATA, TIME, COLOR, DESCRIPTION};
-            String selection = "date = ? and " + DESCRIPTION + " like ?";  // выбираю дату = selectionArgs который беру у groupCursor
-            String[] selectionArgs = new String[]{groupCursor.getString(groupCursor.getColumnIndex(DATA)),
-                    "%" + userFilter.getText().toString() + "%"};
-            String orderBy = TIME + " DESC"; //сортирую по времени
-
-            return db.query(DATABASE_TABLE, columns, selection, selectionArgs, null, null, orderBy);
+            db.close();
         }
     }
 
@@ -171,4 +199,160 @@ public class Fragment_withAllRows extends Fragment implements View.OnClickListen
     public void onClick(View v) {
 
     }
+
+    public void showInputBox(final long id, String oldItem, String oldColor) {
+        final Dialog dialog = new Dialog(getActivity());
+        final Dialog dialogColor = new Dialog(getActivity());
+
+        // заголовки диалогов
+        dialog.setTitle(R.string.edit_row_tittle_box);
+        dialogColor.setTitle(R.string.choose_color);
+
+        // view диалогов
+        dialog.setContentView(R.layout.edit_box);
+        dialogColor.setContentView(R.layout.color_picker_dialog);
+
+        final EditText editText = (EditText) dialog.findViewById(R.id.txtinput);
+        final TextView btcolor = (TextView) dialog.findViewById(R.id.btcolor);
+
+        editText.setText(oldItem);
+        btcolor.setText(oldColor);
+        btcolor.setBackgroundColor(Color.parseColor(oldColor));
+
+        // нажатие на цвет
+        btcolor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //желтый
+                Button yellow = (Button) dialogColor.findViewById(R.id.btn_yellow);
+                yellow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        btcolor.setText("#ffff8d");
+                        btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
+                        dialogColor.dismiss();
+                    }
+                });
+                //красный
+                Button red = (Button) dialogColor.findViewById(R.id.red);
+                red.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        btcolor.setText("#ff8a80");
+                        btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
+                        dialogColor.dismiss();
+                    }
+                });
+                //синий
+                Button blue = (Button) dialogColor.findViewById(R.id.blue);
+                blue.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        btcolor.setText("#80d8ff");
+                        btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
+                        dialogColor.dismiss();
+                    }
+                });
+                //оранжевый
+                Button orange = (Button) dialogColor.findViewById(R.id.orange);
+                orange.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        btcolor.setText("#b1ff7f00");
+                        btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
+                        dialogColor.dismiss();
+                    }
+                });
+                //
+                Button none = (Button) dialogColor.findViewById(R.id.none);
+                none.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        btcolor.setText("#000D00FE");
+                        btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
+                        dialogColor.dismiss();
+                    }
+                });
+                //azure
+                Button azure = (Button) dialogColor.findViewById(R.id.azure);
+                azure.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        btcolor.setText("#a2007fff");
+                        btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
+                        dialogColor.dismiss();
+                    }
+                });
+                //dark green
+                Button dark_green = (Button) dialogColor.findViewById(R.id.dark_green);
+                dark_green.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        btcolor.setText("#a9139429");
+                        btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
+                        dialogColor.dismiss();
+                    }
+                });
+                //magenta
+                Button magenta = (Button) dialogColor.findViewById(R.id.magenta);
+                magenta.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        btcolor.setText("#c1ff00ff");
+                        btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
+                        dialogColor.dismiss();
+                    }
+                });
+                //pink
+                Button pink = (Button) dialogColor.findViewById(R.id.pink);
+                pink.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        btcolor.setText("#ffd180");
+                        btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
+                        dialogColor.dismiss();
+                    }
+                });
+                //salat
+                Button salat = (Button) dialogColor.findViewById(R.id.salat);
+                salat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        btcolor.setText("#ccff90");
+                        btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
+                        dialogColor.dismiss();
+                    }
+                });
+
+                //закрывание диалога выбора цвета, возврат к редактору
+                dialogColor.show();
+            }
+        });
+
+
+        Button bt = (Button) dialog.findViewById(R.id.btdone);
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment_today fragment_today = new Fragment_today();
+                fragment_today.editRec(id, editText.getText().toString(), btcolor.getText().toString(), db); // второй параметр для editRec(change_text)
+
+                init();
+
+                if (!userFilter.getText().toString().isEmpty()){
+                    sctAdapter.getFilter().filter(userFilter.getText().toString());
+                }
+
+                // разворачиваем повторно открытую группу
+                if (openedGroup > -1) {
+                    allRows.expandGroup(openedGroup);
+                }
+
+
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
 }

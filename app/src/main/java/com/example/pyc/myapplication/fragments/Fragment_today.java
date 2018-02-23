@@ -33,6 +33,7 @@ public class Fragment_today extends Fragment {
     // делаю переменную v в качестве view чтобы нормально работать с фрагментом
     View v;
     DBHelper dbHelper;
+    SQLiteDatabase db;
 
     // форматы вывода даты
     long date = System.currentTimeMillis();
@@ -44,6 +45,7 @@ public class Fragment_today extends Fragment {
         super.onCreate(savedInstanceState);
         dbHelper = new DBHelper(getActivity());
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // чтобы заработало findViewById
@@ -51,7 +53,7 @@ public class Fragment_today extends Fragment {
         String dateString = lsdf.format(date);  // сеголня
 
         // Заголовок фрагмента
-        getActivity().setTitle("Сегодня "+ dateString);
+        getActivity().setTitle("Сегодня " + dateString);
 
         init();
         // возвращаю переменной v которая есть View чтобы работать вне метода
@@ -64,12 +66,12 @@ public class Fragment_today extends Fragment {
         String dateString = sdf.format(date);  // сеголня
 
         // подключаемся к БД
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db = dbHelper.getWritableDatabase();
 
         //выбираю с какими колонками работать и в каком порядке выводить
-        String[] columns = new String[] {"rowid AS _id", DATA, TIME, COLOR, DESCRIPTION };
+        String[] columns = new String[]{"rowid AS _id", DATA, TIME, COLOR, DESCRIPTION};
         String selection = "date = ?";  // выбирпаю дату = selectionArgs
-        String[] selectionArgs = new String[] { dateString };  //dateString = Сегодня
+        String[] selectionArgs = new String[]{dateString};  //dateString = Сегодня
         String orderBy = DATA + " DESC, " + TIME + " DESC";  //сортирую по дате, потом по времени
 
         // привязка к элементам формы
@@ -80,8 +82,8 @@ public class Fragment_today extends Fragment {
         SimpleCursorAdapter adapter = new CursorAdapter(getActivity().getBaseContext(),
                 android.R.layout.simple_list_item_2,  // android.R.layout.simple_list_item_2
                 db.query(DATABASE_TABLE, columns, selection, selectionArgs, null, null, orderBy),
-                new String[] {TIME, DESCRIPTION},
-                new int[] { android.R.id.text1, android.R.id.text2 });
+                new String[]{TIME, DESCRIPTION},
+                new int[]{android.R.id.text1, android.R.id.text2});
 
         // сюда будет выводится инфа
         listView.setAdapter(adapter);
@@ -95,44 +97,43 @@ public class Fragment_today extends Fragment {
     }
 
     // кусок кода отвечающий за меню выбора
-    public void delRec(long id) {
+    public void delRec(long id, SQLiteDatabase db) {
         // удалить запись из базы, сама функция
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(DATABASE_TABLE, "id" + " = " + id, null);
     }
-    public void editRec(long id, String change_text, String new_color) {
+
+    public void editRec(long id, String change_text, String new_color, SQLiteDatabase db) {
         // удалить запись из базы, сама функция
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(DESCRIPTION, change_text);
         values.put(COLOR, new_color);
         db.update(DATABASE_TABLE, values, "id" + " = " + id, null);
     }
+
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         // что нажато определяется по 2 параметру
         menu.add(0, 0, 1, "Удалить запись");
         menu.add(0, 1, 0, "Редактировать запись");
     }
+
     public boolean onContextItemSelected(MenuItem item) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db = dbHelper.getWritableDatabase();
+        // получаем из пункта контекстного меню данные по пункту списка
+        AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
         if (item.getItemId() == 0) {
-            // получаем из пункта контекстного меню данные по пункту списка
-            AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             // извлекаем id записи и удаляем соответствующую запись в БД
-            delRec(acmi.id);
+            delRec(acmi.id, db);
             init();  // обновляем основное окно
             return true;
         }
 
         if (item.getItemId() == 1) {
-            // получаем из пункта контекстного меню данные по пункту списка
-            AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             // извлекаем id записи
-            //editRec(acmi.id);
             long i = acmi.id;
 
-            String[] columns = new String[] {"rowid AS _id", DESCRIPTION, COLOR };
+            String[] columns = new String[]{"rowid AS _id", DESCRIPTION, COLOR};
             Cursor discript = db.query(DATABASE_TABLE, columns, "id" + " = " + i, null, null, null, null);
             discript.moveToFirst();
             String oldItem = discript.getString(discript.getColumnIndex(DESCRIPTION));
@@ -170,76 +171,106 @@ public class Fragment_today extends Fragment {
         btcolor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             //желтый
+                //желтый
                 Button yellow = (Button) dialogColor.findViewById(R.id.btn_yellow);
                 yellow.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {btcolor.setText("#ffff8d") ;
+                    public void onClick(View v) {
+                        btcolor.setText("#ffff8d");
                         btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
-                        dialogColor.dismiss();}});
-            //красный
+                        dialogColor.dismiss();
+                    }
+                });
+                //красный
                 Button red = (Button) dialogColor.findViewById(R.id.red);
                 red.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {btcolor.setText("#ff8a80") ;
+                    public void onClick(View v) {
+                        btcolor.setText("#ff8a80");
                         btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
-                        dialogColor.dismiss();}});
-            //синий
+                        dialogColor.dismiss();
+                    }
+                });
+                //синий
                 Button blue = (Button) dialogColor.findViewById(R.id.blue);
                 blue.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {btcolor.setText("#80d8ff") ;
+                    public void onClick(View v) {
+                        btcolor.setText("#80d8ff");
                         btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
-                        dialogColor.dismiss();}});
-            //оранжевый
+                        dialogColor.dismiss();
+                    }
+                });
+                //оранжевый
                 Button orange = (Button) dialogColor.findViewById(R.id.orange);
                 orange.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {btcolor.setText("#b1ff7f00") ;
+                    public void onClick(View v) {
+                        btcolor.setText("#b1ff7f00");
                         btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
-                        dialogColor.dismiss();}});
-            //
+                        dialogColor.dismiss();
+                    }
+                });
+                //
                 Button none = (Button) dialogColor.findViewById(R.id.none);
                 none.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {btcolor.setText("#000D00FE") ;
+                    public void onClick(View v) {
+                        btcolor.setText("#000D00FE");
                         btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
-                        dialogColor.dismiss();}});
-            //azure
+                        dialogColor.dismiss();
+                    }
+                });
+                //azure
                 Button azure = (Button) dialogColor.findViewById(R.id.azure);
                 azure.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {btcolor.setText("#a2007fff") ;
+                    public void onClick(View v) {
+                        btcolor.setText("#a2007fff");
                         btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
-                        dialogColor.dismiss();}});
-            //dark green
+                        dialogColor.dismiss();
+                    }
+                });
+                //dark green
                 Button dark_green = (Button) dialogColor.findViewById(R.id.dark_green);
                 dark_green.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {btcolor.setText("#a9139429") ;
+                    public void onClick(View v) {
+                        btcolor.setText("#a9139429");
                         btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
-                        dialogColor.dismiss();}});
-            //magenta
+                        dialogColor.dismiss();
+                    }
+                });
+                //magenta
                 Button magenta = (Button) dialogColor.findViewById(R.id.magenta);
                 magenta.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {btcolor.setText("#c1ff00ff") ;
+                    public void onClick(View v) {
+                        btcolor.setText("#c1ff00ff");
                         btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
-                        dialogColor.dismiss();}});
-            //pink
+                        dialogColor.dismiss();
+                    }
+                });
+                //pink
                 Button pink = (Button) dialogColor.findViewById(R.id.pink);
                 pink.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {btcolor.setText("#ffd180") ;
+                    public void onClick(View v) {
+                        btcolor.setText("#ffd180");
                         btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
-                        dialogColor.dismiss();}});
-            //salat
+                        dialogColor.dismiss();
+                    }
+                });
+                //salat
                 Button salat = (Button) dialogColor.findViewById(R.id.salat);
                 salat.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {btcolor.setText("#ccff90") ;
+                    public void onClick(View v) {
+                        btcolor.setText("#ccff90");
                         btcolor.setBackgroundColor(Color.parseColor(btcolor.getText().toString()));
-                        dialogColor.dismiss();}});
+                        dialogColor.dismiss();
+                    }
+                });
 
                 //закрывание диалога выбора цвета, возврат к редактору
                 dialogColor.show();
@@ -251,7 +282,8 @@ public class Fragment_today extends Fragment {
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editRec(id, editText.getText().toString(), btcolor.getText().toString()); // второй параметр для editRec(change_text)
+                db = dbHelper.getWritableDatabase();
+                editRec(id, editText.getText().toString(), btcolor.getText().toString(), db); // второй параметр для editRec(change_text)
                 init();  // обновляем основное окно
                 dialog.dismiss();
             }
