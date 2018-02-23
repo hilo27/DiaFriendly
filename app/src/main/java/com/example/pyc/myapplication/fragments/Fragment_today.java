@@ -128,7 +128,7 @@ public class Fragment_today extends Fragment {
         if (item.getItemId() == 1) {
             // получаем из пункта контекстного меню данные по пункту списка
             AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            // извлекаем id записи и удаляем соответствующую запись в БД
+            // извлекаем id записи
             //editRec(acmi.id);
             long i = acmi.id;
 
@@ -147,7 +147,7 @@ public class Fragment_today extends Fragment {
     }
 
 
-    private void showInputBox(final long id, String oldItem, String oldColor) {
+    public void showInputBox(final long id, String oldItem, String oldColor) {
         final Dialog dialog = new Dialog(getActivity());
         final Dialog dialogColor = new Dialog(getActivity());
 

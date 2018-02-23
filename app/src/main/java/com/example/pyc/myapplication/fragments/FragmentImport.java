@@ -58,7 +58,7 @@ public class FragmentImport extends Fragment implements View.OnClickListener {
     String text;
 
     public void setText(double c, double d) {
-        this.text = "Ем "+String.valueOf(d)+"ХЕ, нужно подколоть "+String.valueOf(c)+" ед. инсулина ";
+        this.text = "Ем "+String.valueOf(d)+"ХЕ, подкалываю "+String.valueOf(c)+" ед. инсулина ";
     }
 
     @Override
