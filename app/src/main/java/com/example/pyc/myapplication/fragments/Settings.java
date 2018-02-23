@@ -2,7 +2,6 @@ package com.example.pyc.myapplication.fragments;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.Preference;
@@ -10,7 +9,6 @@ import android.preference.PreferenceFragment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
-
 import com.example.pyc.myapplication.BackupAndRestore;
 import com.example.pyc.myapplication.R;
 

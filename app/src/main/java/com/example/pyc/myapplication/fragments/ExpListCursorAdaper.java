@@ -9,10 +9,8 @@ import android.graphics.Color;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.SimpleCursorTreeAdapter;
-import com.example.pyc.myapplication.R;
 
 import static com.example.pyc.myapplication.fragments.DBHelper.*;
-import static com.example.pyc.myapplication.fragments.DBHelper.DATABASE_TABLE;
 
 // использую в Fragment_withAllRows
 public class ExpListCursorAdaper extends SimpleCursorTreeAdapter {

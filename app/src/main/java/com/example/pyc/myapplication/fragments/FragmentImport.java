@@ -6,39 +6,18 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.ContextMenu;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
-import android.widget.TimePicker;
-import android.widget.Toast;
-
+import android.widget.*;
 import com.example.pyc.myapplication.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import static com.example.pyc.myapplication.fragments.DBHelper.COLOR;
-import static com.example.pyc.myapplication.fragments.DBHelper.DATA;
-import static com.example.pyc.myapplication.fragments.DBHelper.DATABASE_TABLE;
-import static com.example.pyc.myapplication.fragments.DBHelper.DESCRIPTION;
-import static com.example.pyc.myapplication.fragments.DBHelper.FAVAORITE_TABLE;
-import static com.example.pyc.myapplication.fragments.DBHelper.FAVAORITE_TABLE_CREATE_SCRIPT;
-import static com.example.pyc.myapplication.fragments.DBHelper.PHRASE;
-import static com.example.pyc.myapplication.fragments.DBHelper.TIME;
+import static com.example.pyc.myapplication.fragments.DBHelper.*;
 
 public class FragmentImport extends Fragment implements View.OnClickListener {
     // делаю переменную v в качестве view чтобы нормально работать с фрагментом
@@ -155,11 +134,6 @@ public class FragmentImport extends Fragment implements View.OnClickListener {
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        //getActivity().recreate();
-    }
     @Override
     public void onClick(View v) {
         // подготовка данных, переменная values

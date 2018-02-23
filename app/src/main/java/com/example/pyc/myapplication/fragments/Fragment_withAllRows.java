@@ -1,9 +1,7 @@
 package com.example.pyc.myapplication.fragments;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,16 +11,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.*;
 import android.widget.*;
-
 import com.example.pyc.myapplication.R;
 
-import static com.example.pyc.myapplication.fragments.DBHelper.COLOR;
-import static com.example.pyc.myapplication.fragments.DBHelper.DATA;
-import static com.example.pyc.myapplication.fragments.DBHelper.DATABASE_TABLE;
-import static com.example.pyc.myapplication.fragments.DBHelper.DESCRIPTION;
-import static com.example.pyc.myapplication.fragments.DBHelper.FAVAORITE_TABLE;
-import static com.example.pyc.myapplication.fragments.DBHelper.PHRASE;
-import static com.example.pyc.myapplication.fragments.DBHelper.TIME;
+import static com.example.pyc.myapplication.fragments.DBHelper.*;
 
 public class Fragment_withAllRows extends Fragment implements View.OnClickListener {
     // делаю переменную v в качестве view чтобы нормально работать с фрагментом

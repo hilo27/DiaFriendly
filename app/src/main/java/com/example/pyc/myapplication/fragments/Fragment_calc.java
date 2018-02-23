@@ -86,9 +86,9 @@ public class Fragment_calc extends Fragment {
         //сначала загружаю настройки в String
         xS = settings.getString("prefINSto1XE", "");
         yS = settings.getString("prefYGLIto1XE", "");
-        //проверяю на пустотуб потом загружаю
-        if (xS =="") x=2; else x=Double.parseDouble(settings.getString("prefINSto1XE", ""));
-        if (yS =="") y=12; else y=Double.parseDouble(settings.getString("prefYGLIto1XE", ""));
+        //проверяю на пустоту, потом загружаю
+        if (xS.equalsIgnoreCase("")) x=2; else x=Double.parseDouble(settings.getString("prefINSto1XE", ""));
+        if (yS.equalsIgnoreCase("")) y=12; else y=Double.parseDouble(settings.getString("prefYGLIto1XE", ""));
     }
 
     public void init() {
@@ -111,10 +111,12 @@ public class Fragment_calc extends Fragment {
         c= (((a /100)* b)/y)*x;
         d= ((a /100)* b)/y;
 
-        result.setText("Вы съедите "+round(d,1)+"XE \n"
-                      +"Нужно подколоть " +round(c,1)+ " ед. инсулина \n \n"
-                        +"1ХЕ = "+x+" ед. инсулина"
-                        +"\n 1ХЕ = "+y+" грамм углеводов");
+        result.setText(new StringBuilder()
+                .append("Вы съедите ").append(round(d, 1))
+                .append("XE \n")
+                .append("Нужно подколоть ").append(round(c, 1)).append(" ед. инсулина \n \n")
+                .append("1ХЕ = ").append(x).append(" ед. инсулина \n ")
+                .append("1ХЕ = ").append(y).append(" грамм углеводов").toString());
     }
 
     // метод округления, где scale кол-во знаков после запятой

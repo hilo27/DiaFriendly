@@ -4,9 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.example.pyc.myapplication.MainActivity;
 
 public class DBHelper extends SQLiteOpenHelper {
 
